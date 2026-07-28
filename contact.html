@@ -70,15 +70,18 @@
       <h2 class="sec-title" style="font-size:24px;margin-bottom:6px">Book Your Appointment</h2>
       <p style="color:var(--grey-text);font-size:15px;margin-bottom:24px">Tell us a little about your requirement and we'll be in touch.</p>
       <div id="form-msg" class="form-msg"></div>
-      <form id="appointment-form" novalidate>
+      <form id="appointment-form" action="https://formspree.io/f/maqrvqdp" method="POST" enctype="multipart/form-data" novalidate>
+        <!-- Formspree settings -->
+        <input type="hidden" name="_subject" value="New Consultation Request — CredNexa Advisory">
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="form-grid">
-          <div class="field"><label for="name">Full Name *</label><input id="name" name="name" type="text" required placeholder="Your full name"></div>
-          <div class="field"><label for="company">Company Name</label><input id="company" name="company" type="text" placeholder="Company (optional)"></div>
+          <div class="field"><label for="name">Full Name *</label><input id="name" name="Full Name" type="text" required placeholder="Your full name"></div>
+          <div class="field"><label for="company">Company Name</label><input id="company" name="Company Name" type="text" placeholder="Company (optional)"></div>
           <div class="field"><label for="email">Email Address *</label><input id="email" name="email" type="email" required placeholder="you@email.com"></div>
-          <div class="field"><label for="mobile">Mobile Number *</label><input id="mobile" name="mobile" type="tel" required placeholder="+91 …"></div>
+          <div class="field"><label for="mobile">Mobile Number *</label><input id="mobile" name="Mobile Number" type="tel" required placeholder="+91 …"></div>
           <div class="field full">
             <label for="service">Service Interested In</label>
-            <select id="service" name="service">
+            <select id="service" name="Service Interested In">
               <option value="">Select a service</option>
               <option>Financial Advisory & Strategic Planning</option>
               <option>Risk Management & Corporate Governance</option>
@@ -89,13 +92,13 @@
               <option>Retirement Planning</option>
             </select>
           </div>
-          <div class="field"><label for="date">Preferred Date</label><input id="date" name="date" type="date"></div>
-          <div class="field"><label for="time">Preferred Time</label><input id="time" name="time" type="time"></div>
-          <div class="field full"><label for="brief">Brief Requirement</label><textarea id="brief" name="brief" placeholder="Tell us briefly what you'd like help with"></textarea></div>
+          <div class="field"><label for="date">Preferred Date</label><input id="date" name="Preferred Date" type="date"></div>
+          <div class="field"><label for="time">Preferred Time</label><input id="time" name="Preferred Time" type="time"></div>
+          <div class="field full"><label for="brief">Brief Requirement</label><textarea id="brief" name="Brief Requirement" placeholder="Tell us briefly what you'd like help with"></textarea></div>
           <div class="field full">
             <label>Upload Documents (Optional)</label>
             <label class="file-drop" for="file-input"><span id="file-name">Click to upload documents (optional)</span></label>
-            <input id="file-input" type="file" style="display:none" multiple>
+            <input id="file-input" name="upload" type="file" style="display:none" multiple>
           </div>
         </div>
         <button type="submit" class="btn btn-gold btn-lg" style="width:100%;justify-content:center;margin-top:22px">Submit Request</button>

@@ -97,27 +97,72 @@
   show(0); reset();
 })();
 
-/* ---------- Appointment form (front-end demo) ---------- */
+/* ---------- Appointment form (Formspree AJAX submission) ---------- */
 (function () {
   var form = document.getElementById('appointment-form');
   if (!form) return;
+  var msg = document.getElementById('form-msg');
+  var btn = form.querySelector('button[type="submit"]');
+
+  var showMsg = function (text, ok) {
+    if (!msg) return;
+    msg.classList.remove('ok', 'err');
+    msg.classList.add(ok ? 'ok' : 'err');
+    msg.textContent = text;
+    msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var msg = document.getElementById('form-msg');
-    if (msg) {
-      msg.classList.add('ok');
-      msg.textContent = 'Thank you. Your consultation request has been received — our team will confirm your appointment at crednexaadvisory@gmail.com shortly.';
-      msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Basic required-field validation
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
     }
-    form.reset();
-    var fd = document.getElementById('file-name');
-    if (fd) fd.textContent = 'Click to upload documents (optional)';
+
+    var action = form.getAttribute('action') || '';
+    // Guard: remind to set the Formspree endpoint before going live
+    if (action.indexOf('YOUR_FORM_ID') !== -1 || action === '') {
+      showMsg('Form not yet connected. Add your Formspree form ID to the form action before deploying.', false);
+      return;
+    }
+
+    var original = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+    var data = new FormData(form);
+    fetch(action, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    }).then(function (response) {
+      if (response.ok) {
+        showMsg('Thank you. Your consultation request has been received — our team will confirm your appointment at crednexaadvisory@gmail.com shortly.', true);
+        form.reset();
+        var fd = document.getElementById('file-name');
+        if (fd) fd.textContent = 'Click to upload documents (optional)';
+      } else {
+        return response.json().then(function (d) {
+          var m = (d && d.errors) ? d.errors.map(function (er) { return er.message; }).join(', ')
+                                  : 'Something went wrong. Please try again or email us directly at crednexaadvisory@gmail.com.';
+          showMsg(m, false);
+        });
+      }
+    }).catch(function () {
+      showMsg('Network error. Please try again or email us directly at crednexaadvisory@gmail.com.', false);
+    }).finally(function () {
+      if (btn) { btn.disabled = false; btn.textContent = original; }
+    });
   });
+
   var file = document.getElementById('file-input');
   var fname = document.getElementById('file-name');
   if (file && fname) {
     file.addEventListener('change', function () {
-      fname.textContent = file.files.length ? file.files[0].name : 'Click to upload documents (optional)';
+      fname.textContent = file.files.length
+        ? (file.files.length === 1 ? file.files[0].name : file.files.length + ' files selected')
+        : 'Click to upload documents (optional)';
     });
   }
 })();
