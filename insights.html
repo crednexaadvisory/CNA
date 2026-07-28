@@ -9,12 +9,24 @@
 <link rel="stylesheet" href="styles.css">
 <style>
   .topic-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:24px; }
-  .topic-card { background:var(--navy-2); border:1px solid var(--line-soft); border-radius:4px; padding:30px; transition:transform .35s var(--ease), border-color .35s; }
+  .topic-card { background:var(--navy-2); border:1px solid var(--line-soft); border-radius:4px; padding:30px; transition:transform .35s var(--ease), border-color .35s; display:flex; flex-direction:column; }
   .topic-card:hover { transform:translateY(-5px); border-color:var(--gold); }
   .topic-card .tag { font-family:var(--f-head); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); }
   .topic-card h3 { font-size:20px; margin:12px 0 10px; }
   .topic-card p { font-size:14.5px; color:var(--grey-text); }
-  .topic-card .soon { display:inline-block; margin-top:16px; font-family:var(--f-head); font-size:12px; color:var(--grey-text); border:1px solid var(--line-soft); padding:4px 12px; border-radius:30px; }
+  .topic-card .soon { display:inline-block; margin-top:16px; font-family:var(--f-head); font-size:12px; color:var(--grey-text); border:1px solid var(--line-soft); padding:4px 12px; border-radius:30px; align-self:flex-start; }
+  /* Article links inside a topic */
+  .article-list { list-style:none; margin-top:18px; padding-top:16px; border-top:1px solid var(--line-soft); display:flex; flex-direction:column; gap:2px; }
+  .article-list li a {
+    display:flex; align-items:flex-start; gap:10px; padding:10px 0;
+    font-family:var(--f-head); font-size:14.5px; color:var(--white); line-height:1.4;
+    transition:color .25s; border-bottom:1px solid rgba(255,255,255,.04);
+  }
+  .article-list li:last-child a { border-bottom:none; }
+  .article-list li a:hover { color:var(--gold); }
+  .article-list li a .doc-ic { color:var(--gold); flex:none; margin-top:1px; }
+  .article-list li a .arrow { margin-left:auto; opacity:0; transform:translateX(-4px); transition:.25s; color:var(--gold); flex:none; }
+  .article-list li a:hover .arrow { opacity:1; transform:translateX(0); }
 </style>
 </head>
 <body>
@@ -58,8 +70,47 @@
       <p class="lead">Our resources library is growing. Explore the areas we publish on — and subscribe for new articles as they're released.</p>
     </div>
     <div class="topic-grid">
-      <div class="topic-card reveal"><div class="tag">Strategy</div><h3>Business Strategy</h3><p>Frameworks for growth, expansion and building durable competitive advantage.</p><span class="soon">Coming soon</span></div>
-      <div class="topic-card reveal"><div class="tag">Planning</div><h3>Financial Planning</h3><p>Structuring finances for clarity, confidence and long-term stability.</p><span class="soon">Coming soon</span></div>
+
+      <!-- =====================================================================
+           HOW TO ADD AN ARTICLE:
+           1. Save your article as a PDF inside the  articles/  folder.
+              Example filename (no spaces):  business-strategy-2026.pdf
+           2. Inside the matching topic card below, DELETE the line:
+                <span class="soon">Coming soon</span>
+           3. ADD a <ul class="article-list"> ... </ul> block like the
+              "Business Strategy" example card directly below.
+           4. To add MORE articles to the same topic, just copy one <li> line.
+           Each <li> line is one article. Nothing else needs to change.
+           ===================================================================== -->
+
+      <!-- ===== EXAMPLE CARD (shows a published article) ===== -->
+      <div class="topic-card reveal">
+        <div class="tag">Strategy</div>
+        <h3>Business Strategy</h3>
+        <p>Frameworks for growth, expansion and building durable competitive advantage.</p>
+        <ul class="article-list">
+          <!-- ONE ARTICLE = ONE <li> LINE. Copy a line to add another. -->
+          <li><a href="articles/sample-business-strategy.pdf" target="_blank" rel="noopener">
+            <svg class="doc-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span>5 Growth Levers for Indian MSMEs in 2026</span>
+            <svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+          <li><a href="articles/sample-business-strategy1.pdf" target="_blank" rel="noopener">
+            <svg class="doc-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span>5 Growth Levers for Indian MSMEs in 2026-1</span>
+            <svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="topic-card reveal"><div class="tag">Planning</div><h3>Financial Planning</h3><p>Structuring finances for clarity, confidence and long-term stability.</p><ul class="article-list">
+            <li><a href="articles/financial-planning-checklist-2026.pdf" target="_blank" rel="noopener">
+              <svg class="doc-ic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+              <span>Financial Planning Checklist 2026</span>
+              <svg class="arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a></li>
+          </ul>
+        </div>
       <div class="topic-card reveal"><div class="tag">Markets</div><h3>Investment Insights</h3><p>How to think about allocation, risk and opportunity across cycles.</p><span class="soon">Coming soon</span></div>
       <div class="topic-card reveal"><div class="tag">Risk</div><h3>Risk Management</h3><p>Identifying, measuring and mitigating enterprise and market risk.</p><span class="soon">Coming soon</span></div>
       <div class="topic-card reveal"><div class="tag">Governance</div><h3>Corporate Governance</h3><p>Building boards, controls and frameworks that earn trust.</p><span class="soon">Coming soon</span></div>
