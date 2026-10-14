@@ -1,10 +1,11 @@
-/* ---------- Nav: scroll state + mobile toggle ---------- */
+/* ---------- Nav: scroll state + mobile toggle + floating CTA ---------- */
 (function () {
   var nav = document.querySelector('.nav');
+  var fab = document.querySelector('.float-book');
   var onScroll = function () {
-    if (!nav) return;
-    if (window.scrollY > 40) nav.classList.add('scrolled');
-    else nav.classList.remove('scrolled');
+    var y = window.scrollY;
+    if (nav) nav.classList.toggle('scrolled', y > 10);
+    if (fab) fab.classList.toggle('show', y > 600);
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
@@ -13,7 +14,8 @@
   var links = document.querySelector('.nav-links');
   if (burger && links) {
     burger.addEventListener('click', function () {
-      links.classList.toggle('mobile-open');
+      var open = links.classList.toggle('open');
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
   }
 })();
@@ -69,32 +71,15 @@
       document.querySelectorAll('.faq-item.open').forEach(function (o) {
         o.classList.remove('open');
         o.querySelector('.faq-a').style.maxHeight = null;
+        o.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
       });
       if (!open) {
         item.classList.add('open');
         a.style.maxHeight = a.scrollHeight + 'px';
+        q.setAttribute('aria-expanded', 'true');
       }
     });
   });
-})();
-
-/* ---------- Testimonials carousel ---------- */
-(function () {
-  var testis = document.querySelectorAll('.testi');
-  var dots = document.querySelectorAll('.testi-dots button');
-  if (!testis.length) return;
-  var idx = 0, timer;
-  var show = function (i) {
-    testis.forEach(function (t, n) { t.classList.toggle('active', n === i); });
-    dots.forEach(function (d, n) { d.classList.toggle('active', n === i); });
-    idx = i;
-  };
-  var next = function () { show((idx + 1) % testis.length); };
-  dots.forEach(function (d, n) {
-    d.addEventListener('click', function () { show(n); reset(); });
-  });
-  var reset = function () { clearInterval(timer); timer = setInterval(next, 5500); };
-  show(0); reset();
 })();
 
 /* ---------- Appointment form (Formspree AJAX submission) ---------- */
@@ -138,7 +123,7 @@
       headers: { 'Accept': 'application/json' }
     }).then(function (response) {
       if (response.ok) {
-        showMsg('Thank you. Your consultation request has been received — our team will confirm your appointment at crednexaadvisory@gmail.com shortly.', true);
+        showMsg('Thank you. Your consultation request has been received — we will be in touch shortly to confirm a convenient time.', true);
         form.reset();
         var fd = document.getElementById('file-name');
         if (fd) fd.textContent = 'Click to upload documents (optional)';
