@@ -130,12 +130,12 @@
       } else {
         return response.json().then(function (d) {
           var m = (d && d.errors) ? d.errors.map(function (er) { return er.message; }).join(', ')
-                                  : 'Something went wrong. Please try again or email us directly at crednexaadvisory@gmail.com.';
+                                  : 'Something went wrong. Please try again or email us directly at arpit@crednexaadvisory.com.';
           showMsg(m, false);
         });
       }
     }).catch(function () {
-      showMsg('Network error. Please try again or email us directly at crednexaadvisory@gmail.com.', false);
+      showMsg('Network error. Please try again or email us directly at arpit@crednexaadvisory.com.', false);
     }).finally(function () {
       if (btn) { btn.disabled = false; btn.textContent = original; }
     });

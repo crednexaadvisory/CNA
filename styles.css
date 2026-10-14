@@ -426,3 +426,7 @@ blockquote.pull { font-family: var(--f-display); font-size: clamp(25px, 2.6vw, 3
   .float-book span { display: none; }
   .float-book { padding: 14px; }
 }
+
+/* ---------- Verified badge (founder) ---------- */
+.verified { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; font-size: 13.5px; font-weight: 500; color: var(--ink-2); }
+.verified svg { color: var(--gold); }
