@@ -74,7 +74,12 @@
       <h2 style="font-size:32px">Book a consultation</h2>
       <p class="small" style="margin:6px 0 26px">Tell us briefly about your requirement and we’ll be in touch.</p>
       <div id="form-msg" class="form-msg" role="status"></div>
-      <form id="appointment-form" action="https://formspree.io/f/maqrvqdp" method="POST" novalidate>
+      <!--
+        CLOUDFLARE TURNSTILE (anti-spam)
+        Paste your Turnstile SITE KEY (public, starts with "0x") into data-turnstile-sitekey below.
+        While it is empty, the simple arithmetic security check is used instead.
+      -->
+      <form id="appointment-form" action="https://formspree.io/f/maqrvqdp" method="POST" novalidate data-turnstile-sitekey="">
         <input type="hidden" name="_subject" value="New Consultation Request — CredNexa Advisory">
         <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="form-grid">
@@ -87,7 +92,8 @@
           <div class="field"><label for="date">Preferred date</label><input id="date" name="Preferred Date" type="date"></div>
           <div class="field"><label for="time">Preferred time</label><input id="time" name="Preferred Time" type="time"></div>
           <div class="field full"><label for="brief">Brief requirement</label><textarea id="brief" name="Brief Requirement" placeholder="What would you like help with?"></textarea></div>
-          <div class="field full captcha"><label for="captcha">Security check — <span id="captcha-q">What is 3 + 4?</span> *</label>
+          <div class="field full turnstile-field" id="turnstile-field" hidden><label>Security check *</label><div id="turnstile-widget"></div></div>
+          <div class="field full captcha" id="captcha-field"><label for="captcha">Security check — <span id="captcha-q">What is 3 + 4?</span> *</label>
             <input id="captcha" name="Security Check" type="text" inputmode="numeric" required autocomplete="off" placeholder="Enter the answer"></div>
         </div>
         <label class="consent"><input type="checkbox" name="Acknowledgement" value="Accepted" required>
