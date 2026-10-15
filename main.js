@@ -152,21 +152,34 @@
   });
 })();
 
-/* ---------- Cookie consent (Google tag in <head> runs in Consent Mode; this grants/denies analytics cookies) ---------- */
+/* ---------- Cookie consent + Google Analytics (loaded only after "Accept") ---------- */
 (function () {
   var KEY = 'cna-cookie-consent';
+  var meta = document.querySelector('meta[name="ga-id"]');
+  var GA_ID = meta ? meta.getAttribute('content') : '';
   var store = {
     get: function () { try { return localStorage.getItem(KEY); } catch (e) { return null; } },
     set: function (v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
   };
-  var gtagSafe = function () { if (typeof window.gtag === 'function') window.gtag.apply(null, arguments); };
 
-  var grant = function () {
-    gtagSafe('consent', 'update', { analytics_storage: 'granted' });
+  var loadGA = function () {
+    if (!GA_ID || window.__cnaGA) return;
+    window.__cnaGA = true;
+    window['ga-disable-' + GA_ID] = false;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID, { anonymize_ip: true });
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
   };
 
-  var deny = function () {
-    gtagSafe('consent', 'update', { analytics_storage: 'denied' });
+  var disableGA = function () {
+    if (GA_ID) window['ga-disable-' + GA_ID] = true;
+    if (window.gtag) window.gtag('consent', 'update', { analytics_storage: 'denied' });
     // Remove any Google Analytics cookies already set
     var host = location.hostname.replace(/^www\./, '');
     document.cookie.split(';').forEach(function (c) {
@@ -188,7 +201,7 @@
   };
   var decide = function (v) {
     store.set(v);
-    if (v === 'accepted') grant(); else deny();
+    if (v === 'accepted') loadGA(); else disableGA();
     hide();
   };
   var show = function () {
@@ -215,7 +228,8 @@
   };
 
   var choice = store.get();
-  if (choice !== 'accepted' && choice !== 'declined') show();
+  if (choice === 'accepted') loadGA();
+  else if (choice !== 'declined') show();
 
   document.querySelectorAll('[data-cookie-settings]').forEach(function (el) {
     el.addEventListener('click', function (e) { e.preventDefault(); show(); });
