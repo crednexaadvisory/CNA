@@ -82,12 +82,24 @@
   });
 })();
 
-/* ---------- Appointment form (Formspree AJAX submission) ---------- */
+/* ---------- Appointment form (Formspree AJAX submission + security check) ---------- */
 (function () {
   var form = document.getElementById('appointment-form');
   if (!form) return;
   var msg = document.getElementById('form-msg');
   var btn = form.querySelector('button[type="submit"]');
+  var capQ = document.getElementById('captcha-q');
+  var capIn = document.getElementById('captcha');
+  var answer = null;
+
+  var newChallenge = function () {
+    var a = 2 + Math.floor(Math.random() * 8);
+    var b = 2 + Math.floor(Math.random() * 8);
+    answer = a + b;
+    if (capQ) capQ.textContent = 'What is ' + a + ' + ' + b + '?';
+    if (capIn) capIn.value = '';
+  };
+  newChallenge();
 
   var showMsg = function (text, ok) {
     if (!msg) return;
@@ -100,24 +112,23 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    // Basic required-field validation
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
-
-    var action = form.getAttribute('action') || '';
-    // Guard: remind to set the Formspree endpoint before going live
-    if (action.indexOf('YOUR_FORM_ID') !== -1 || action === '') {
-      showMsg('Form not yet connected. Add your Formspree form ID to the form action before deploying.', false);
+    if (capIn && parseInt(capIn.value.trim(), 10) !== answer) {
+      showMsg('The security check answer is incorrect. Please try the new question.', false);
+      newChallenge();
+      capIn.focus();
       return;
     }
 
-    var original = btn ? btn.textContent : '';
+    var original = btn ? btn.innerHTML : '';
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
     var data = new FormData(form);
-    fetch(action, {
+    data.delete('Security Check');
+    fetch(form.getAttribute('action'), {
       method: 'POST',
       body: data,
       headers: { 'Accept': 'application/json' }
@@ -125,8 +136,7 @@
       if (response.ok) {
         showMsg('Thank you. Your consultation request has been received — we will be in touch shortly to confirm a convenient time.', true);
         form.reset();
-        var fd = document.getElementById('file-name');
-        if (fd) fd.textContent = 'Click to upload documents (optional)';
+        newChallenge();
       } else {
         return response.json().then(function (d) {
           var m = (d && d.errors) ? d.errors.map(function (er) { return er.message; }).join(', ')
@@ -137,19 +147,93 @@
     }).catch(function () {
       showMsg('Network error. Please try again or email us directly at arpit@crednexaadvisory.com.', false);
     }).finally(function () {
-      if (btn) { btn.disabled = false; btn.textContent = original; }
+      if (btn) { btn.disabled = false; btn.innerHTML = original; }
     });
   });
+})();
 
-  var file = document.getElementById('file-input');
-  var fname = document.getElementById('file-name');
-  if (file && fname) {
-    file.addEventListener('change', function () {
-      fname.textContent = file.files.length
-        ? (file.files.length === 1 ? file.files[0].name : file.files.length + ' files selected')
-        : 'Click to upload documents (optional)';
+/* ---------- Cookie consent + Google Analytics (loaded only after "Accept") ---------- */
+(function () {
+  var KEY = 'cna-cookie-consent';
+  var meta = document.querySelector('meta[name="ga-id"]');
+  var GA_ID = meta ? meta.getAttribute('content') : '';
+  var store = {
+    get: function () { try { return localStorage.getItem(KEY); } catch (e) { return null; } },
+    set: function (v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+  };
+
+  var loadGA = function () {
+    if (!GA_ID || window.__cnaGA) return;
+    window.__cnaGA = true;
+    window['ga-disable-' + GA_ID] = false;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied' });
+    window.gtag('js', new Date());
+    window.gtag('config', GA_ID, { anonymize_ip: true });
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+    document.head.appendChild(s);
+  };
+
+  var disableGA = function () {
+    if (GA_ID) window['ga-disable-' + GA_ID] = true;
+    if (window.gtag) window.gtag('consent', 'update', { analytics_storage: 'denied' });
+    // Remove any Google Analytics cookies already set
+    var host = location.hostname.replace(/^www\./, '');
+    document.cookie.split(';').forEach(function (c) {
+      var name = c.split('=')[0].trim();
+      if (/^_ga/.test(name) || name === '_gid' || name === '_gat') {
+        ['', '; domain=' + host, '; domain=.' + host].forEach(function (d) {
+          document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/' + d;
+        });
+      }
     });
-  }
+  };
+
+  var banner;
+  var hide = function () {
+    if (!banner) return;
+    banner.classList.remove('show');
+    var b = banner; banner = null;
+    setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 400);
+  };
+  var decide = function (v) {
+    store.set(v);
+    if (v === 'accepted') loadGA(); else disableGA();
+    hide();
+  };
+  var show = function () {
+    if (banner) return;
+    banner = document.createElement('div');
+    banner.className = 'cookie-banner';
+    banner.setAttribute('role', 'dialog');
+    banner.setAttribute('aria-live', 'polite');
+    banner.setAttribute('aria-label', 'Cookie settings');
+    banner.innerHTML =
+      '<h4>Cookie settings</h4>' +
+      '<p>We use optional analytics cookies (Google Analytics) to understand how visitors use this website and improve it. ' +
+      'They are set only if you accept. See our <a href="privacy.html">Privacy Policy</a>.</p>' +
+      '<div class="actions">' +
+      '<button type="button" class="btn btn-outline" data-choice="declined">Decline</button>' +
+      '<button type="button" class="btn btn-primary" data-choice="accepted">Accept</button>' +
+      '</div>';
+    banner.addEventListener('click', function (e) {
+      var c = e.target.getAttribute('data-choice');
+      if (c) decide(c);
+    });
+    document.body.appendChild(banner);
+    requestAnimationFrame(function () { requestAnimationFrame(function () { if (banner) banner.classList.add('show'); }); });
+  };
+
+  var choice = store.get();
+  if (choice === 'accepted') loadGA();
+  else if (choice !== 'declined') show();
+
+  document.querySelectorAll('[data-cookie-settings]').forEach(function (el) {
+    el.addEventListener('click', function (e) { e.preventDefault(); show(); });
+  });
 })();
 
 /* ---------- Footer year ---------- */
