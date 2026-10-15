@@ -82,24 +82,12 @@
   });
 })();
 
-/* ---------- Appointment form (Formspree AJAX submission + security check) ---------- */
+/* ---------- Appointment form (Formspree AJAX submission + Cloudflare Turnstile / arithmetic check) ---------- */
 (function () {
   var form = document.getElementById('appointment-form');
   if (!form) return;
   var msg = document.getElementById('form-msg');
   var btn = form.querySelector('button[type="submit"]');
-  var capQ = document.getElementById('captcha-q');
-  var capIn = document.getElementById('captcha');
-  var answer = null;
-
-  var newChallenge = function () {
-    var a = 2 + Math.floor(Math.random() * 8);
-    var b = 2 + Math.floor(Math.random() * 8);
-    answer = a + b;
-    if (capQ) capQ.textContent = 'What is ' + a + ' + ' + b + '?';
-    if (capIn) capIn.value = '';
-  };
-  newChallenge();
 
   var showMsg = function (text, ok) {
     if (!msg) return;
@@ -109,6 +97,65 @@
     msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
+  /* --- Arithmetic check (fallback when no Turnstile site key is set, or Turnstile fails to load) --- */
+  var capField = document.getElementById('captcha-field');
+  var capQ = document.getElementById('captcha-q');
+  var capIn = document.getElementById('captcha');
+  var answer = null;
+  var useMath = true;
+  var newChallenge = function () {
+    var a = 2 + Math.floor(Math.random() * 8);
+    var b = 2 + Math.floor(Math.random() * 8);
+    answer = a + b;
+    if (capQ) capQ.textContent = 'What is ' + a + ' + ' + b + '?';
+    if (capIn) capIn.value = '';
+  };
+  var setMath = function (on) {
+    useMath = on;
+    if (capField) capField.hidden = !on;
+    if (capIn) capIn.required = on;
+  };
+  newChallenge();
+
+  /* --- Cloudflare Turnstile --- */
+  var siteKey = (form.getAttribute('data-turnstile-sitekey') || '').trim();
+  var tsField = document.getElementById('turnstile-field');
+  var tsWidget = null;
+  var tsToken = '';
+  var useTurnstile = false;
+  var resetTurnstile = function () {
+    tsToken = '';
+    if (useTurnstile && window.turnstile && tsWidget !== null) window.turnstile.reset(tsWidget);
+  };
+
+  if (siteKey) {
+    useTurnstile = true;
+    setMath(false);
+    if (tsField) tsField.hidden = false;
+    window.cnaTurnstileReady = function () {
+      tsWidget = window.turnstile.render('#turnstile-widget', {
+        sitekey: siteKey,
+        theme: 'light',
+        size: 'flexible',
+        action: 'contact',
+        callback: function (t) { tsToken = t; },
+        'expired-callback': function () { tsToken = ''; },
+        'error-callback': function () { tsToken = ''; }
+      });
+    };
+    var sc = document.createElement('script');
+    sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=cnaTurnstileReady';
+    sc.async = true;
+    sc.defer = true;
+    sc.onerror = function () {
+      // Turnstile blocked or unreachable: fall back to the arithmetic check
+      useTurnstile = false;
+      if (tsField) tsField.hidden = true;
+      setMath(true);
+    };
+    document.head.appendChild(sc);
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -116,7 +163,11 @@
       form.reportValidity();
       return;
     }
-    if (capIn && parseInt(capIn.value.trim(), 10) !== answer) {
+    if (useTurnstile && !tsToken) {
+      showMsg('Please complete the security check before submitting.', false);
+      return;
+    }
+    if (useMath && capIn && parseInt(capIn.value.trim(), 10) !== answer) {
       showMsg('The security check answer is incorrect. Please try the new question.', false);
       newChallenge();
       capIn.focus();
@@ -128,6 +179,7 @@
 
     var data = new FormData(form);
     data.delete('Security Check');
+    if (useTurnstile) data.set('cf-turnstile-response', tsToken);
     fetch(form.getAttribute('action'), {
       method: 'POST',
       body: data,
@@ -136,7 +188,6 @@
       if (response.ok) {
         showMsg('Thank you. Your consultation request has been received — we will be in touch shortly to confirm a convenient time.', true);
         form.reset();
-        newChallenge();
       } else {
         return response.json().then(function (d) {
           var m = (d && d.errors) ? d.errors.map(function (er) { return er.message; }).join(', ')
@@ -147,6 +198,8 @@
     }).catch(function () {
       showMsg('Network error. Please try again or email us directly at arpit@crednexaadvisory.com.', false);
     }).finally(function () {
+      newChallenge();
+      resetTurnstile();
       if (btn) { btn.disabled = false; btn.innerHTML = original; }
     });
   });
