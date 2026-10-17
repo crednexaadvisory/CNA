@@ -9,9 +9,9 @@
 <meta property="og:title" content="Learning & Videos — CredNexa Advisory">
 <meta property="og:description" content="Practitioner-led training modules and educational videos on treasury, risk, governance and business finance.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://www.crednexaadvisory.com/training.html">
+<meta property="og:url" content="https://www.crednexaadvisory.com/training">
 <meta property="og:image" content="https://www.crednexaadvisory.com/assets/logo-full.png">
-<link rel="canonical" href="https://www.crednexaadvisory.com/training.html">
+<link rel="canonical" href="https://www.crednexaadvisory.com/training">
 <link rel="icon" href="assets/logo-mark.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -156,26 +156,7 @@
   </div>
 </footer>
 <a href="contact.html" class="float-book" aria-label="Book a consultation"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Book a Consultation</span></a>
-<script>
-  /* TO ADD A VIDEO: copy one { ... } block, paste it in the list and change url / title / desc.
-     Keep titles educational (e.g. "Understanding…") — avoid words like "Advisory" or "Recommendation". */
-  const VIDEOS = [
-    { url: "https://youtu.be/rJ0a2XPB61k", title: "Understanding Insurance", desc: "A general explainer on how insurance works and the questions to ask. Educational only." },
-    { url: "https://youtu.be/L1SpNbiuCkI", title: "Investing Basics", desc: "General principles every first-time investor should understand. Educational only." }
-  ];
-  (function () {
-    var grid = document.getElementById('videoGrid'), empty = document.getElementById('videosEmpty');
-    var idOf = function (u) { var m = String(u).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([A-Za-z0-9_-]{11})/); return m ? m[1] : null; };
-    var esc = function (s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
-    var list = VIDEOS.filter(function (v) { return idOf(v.url); });
-    if (!list.length) { empty.style.display = 'block'; return; }
-    grid.innerHTML = list.map(function (v) {
-      return '<div class="video-card"><div class="video-frame"><iframe src="https://www.youtube.com/embed/' + idOf(v.url) +
-        '" title="' + esc(v.title || 'Video') + '" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>' +
-        '<div class="video-meta"><span class="tag">Educational</span><h3>' + esc(v.title) + '</h3><p>' + esc(v.desc) + '</p></div></div>';
-    }).join('');
-  })();
-</script>
+<script src="videos.js"></script>
 <script src="main.js"></script>
 </body>
 </html>
