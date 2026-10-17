@@ -10,11 +10,16 @@
 <meta property="og:description" content="Educational articles on business strategy, risk management, governance, treasury and business finance from CredNexa Advisory.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.crednexaadvisory.com/insights">
-<meta property="og:image" content="https://www.crednexaadvisory.com/assets/logo-full.png">
+<meta property="og:image" content="https://www.crednexaadvisory.com/assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="CredNexa Advisory — Treasury, Risk &amp; Business Consulting, Mumbai">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://www.crednexaadvisory.com/insights">
-<link rel="icon" href="assets/logo-mark.png" type="image/png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="assets/favicon.png" type="image/png">
+<link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/cormorant-garamond.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="styles.css">
 <!-- Google Analytics (G-JGCNQM9YE3) is loaded by main.js only after the visitor accepts cookies -->
 <meta name="ga-id" content="G-JGCNQM9YE3">
@@ -61,16 +66,17 @@
     <!--
       HOW TO ADD AN ARTICLE
       1. Save the article as a PDF in the  articles/  folder (no spaces in the file name).
-      2. In the matching card below, replace  <span class="soon">…</span>  with:
-           <ul class="article-list"><li><a href="articles/your-file.pdf" target="_blank" rel="noopener">…</a></li></ul>
-         (copy an existing <li> line from the Business Strategy card).
+      2. To add to an existing topic, copy one <li> line inside that card's <ul class="article-list">.
+         To publish in a new topic, copy a whole <article class="card"> block, change the tag, title,
+         description and link, and delete that topic from the "Coming up" list.
       3. Before publishing, check the article contains no specific buy/sell/hold
          recommendations, return projections or performance claims.
     -->
     <div class="notice reveal"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg><div><strong>Educational content only.</strong> Articles and resources are general information for educational purposes. They are not investment advice or a recommendation to buy, sell or hold any security, fund or financial product, and do not consider your personal circumstances. CredNexa Advisory is not a SEBI-registered Investment Adviser or Research Analyst. Past performance does not indicate future results.</div></div>
     <div class="card-grid" style="margin-top:48px">
-      <article class="card reveal"><span class="tag">Strategy</span><h3>Business Strategy</h3><p>Frameworks for growth, expansion and durable competitive advantage.</p><ul class="article-list"><li><a href="articles/sample-business-strategy.pdf" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><span>5 Growth Levers for Indian MSMEs in 2026</span><span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li></ul></article><article class="card reveal"><span class="tag">Literacy</span><h3>Financial Literacy</h3><p>General, educational primers on money habits and common mistakes. Not investment advice.</p><ul class="article-list"><li><a href="articles/investing-for-beginners.pdf" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><span>Investing for Beginners: 12 Simple Rules</span><span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li></ul></article><article class="card reveal"><span class="tag">Risk</span><h3>Risk Management</h3><p>Identifying, measuring and mitigating enterprise and market risk.</p><span class="soon">New articles coming soon</span></article><article class="card reveal"><span class="tag">Treasury</span><h3>Treasury &amp; Market Risk</h3><p>Limits, exposures, regulatory capital and the plumbing of treasury.</p><span class="soon">New articles coming soon</span></article><article class="card reveal"><span class="tag">Governance</span><h3>Corporate Governance</h3><p>Boards, controls and frameworks that earn trust.</p><span class="soon">New articles coming soon</span></article><article class="card reveal"><span class="tag">Operations</span><h3>Business Operations</h3><p>Process, cost and reporting disciplines that compound over time.</p><span class="soon">New articles coming soon</span></article><article class="card reveal"><span class="tag">Finance</span><h3>Business Finance</h3><p>Budgeting, cash flow and working capital for owner-managed businesses.</p><span class="soon">New articles coming soon</span></article><article class="card reveal"><span class="tag">Economy</span><h3>Economy &amp; Regulation</h3><p>Reading the economic and regulatory signals that affect businesses.</p><span class="soon">New articles coming soon</span></article><article class="card reveal"><span class="tag">Tax</span><h3>Tax &amp; Compliance Updates</h3><p>Plain-English summaries of tax and compliance changes for businesses.</p><span class="soon">New articles coming soon</span></article>
+      <article class="card reveal"><span class="tag">Strategy</span><h3>Business Strategy</h3><p>Frameworks for growth, expansion and durable competitive advantage.</p><ul class="article-list"><li><a href="articles/sample-business-strategy.pdf" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><span>5 Growth Levers for Indian MSMEs in 2026</span><span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li></ul></article><article class="card reveal"><span class="tag">Literacy</span><h3>Financial Literacy</h3><p>General, educational primers on money habits and common mistakes. Not investment advice.</p><ul class="article-list"><li><a href="articles/investing-for-beginners.pdf" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><span>Investing for Beginners: 12 Simple Rules</span><span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a></li></ul></article>
     </div>
+    <div class="upcoming reveal"><span class="eyebrow plain">Coming up</span><div class="chips"><span>Risk Management</span><span>Treasury &amp; Market Risk</span><span>Corporate Governance</span><span>Business Operations</span><span>Business Finance</span><span>Economy &amp; Regulation</span><span>Tax &amp; Compliance Updates</span></div></div>
   </div>
 </section>
 
