@@ -156,9 +156,64 @@
     document.head.appendChild(sc);
   }
 
+  /* --- Field rules --- */
+  var countWords = function (v) { var m = v.trim().match(/\S+/g); return m ? m.length : 0; };
+  var RULES = {
+    name: function (v) {
+      var letters = (v.match(/\p{L}/gu) || []).length;
+      return letters >= 5 ? '' : 'Please enter your full name (at least 5 letters).';
+    },
+    email: function (v) {
+      return /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)*\.[A-Za-z]{2,}$/.test(v.trim()) ? '' : 'Please enter a valid email address, e.g. name@company.com.';
+    },
+    mobile: function (v) {
+      return /^\d{10}$/.test(v.trim()) ? '' : 'Please enter a 10-digit mobile number (digits only).';
+    },
+    brief: function (v) {
+      var n = countWords(v);
+      return n >= 10 ? '' : 'Please describe your requirement in at least 10 words (' + n + ' so far).';
+    }
+  };
+  var check = function (id) {
+    var el = document.getElementById(id), err = document.getElementById(id + '-err');
+    if (!el) return '';
+    var m = RULES[id](el.value);
+    el.setCustomValidity(m);
+    el.setAttribute('aria-invalid', m ? 'true' : 'false');
+    el.closest('.field').classList.toggle('invalid', !!m);
+    if (err) err.textContent = m;
+    return m;
+  };
+  Object.keys(RULES).forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('blur', function () { if (el.value) check(id); });
+    el.addEventListener('input', function () { if (el.closest('.field').classList.contains('invalid')) check(id); });
+  });
+  var mobileEl = document.getElementById('mobile');
+  if (mobileEl) mobileEl.addEventListener('input', function () {
+    var d = mobileEl.value.replace(/\D/g, '').slice(0, 10);
+    if (d !== mobileEl.value) mobileEl.value = d;
+  });
+  var briefEl = document.getElementById('brief'), briefCount = document.getElementById('brief-count');
+  var updateCount = function () {
+    if (!briefEl || !briefCount) return;
+    var n = countWords(briefEl.value);
+    briefCount.textContent = n + ' / 10 words';
+    briefCount.classList.toggle('ok', n >= 10);
+  };
+  if (briefEl) briefEl.addEventListener('input', updateCount);
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
+    var firstBad = null;
+    Object.keys(RULES).forEach(function (id) { if (check(id) && !firstBad) firstBad = document.getElementById(id); });
+    if (firstBad) {
+      showMsg('Please correct the highlighted fields and try again.', false);
+      firstBad.focus();
+      return;
+    }
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
@@ -188,15 +243,17 @@
       if (response.ok) {
         showMsg('Thank you. Your consultation request has been received — we will be in touch shortly to confirm a convenient time.', true);
         form.reset();
+        updateCount();
+        form.querySelectorAll('.field.invalid').forEach(function (f) { f.classList.remove('invalid'); });
       } else {
         return response.json().then(function (d) {
           var m = (d && d.errors) ? d.errors.map(function (er) { return er.message; }).join(', ')
-                                  : 'Something went wrong. Please try again or email us directly at arpit@crednexaadvisory.com.';
+                                  : 'Something went wrong. Please try again or email us directly at contact@crednexaadvisory.com.';
           showMsg(m, false);
         });
       }
     }).catch(function () {
-      showMsg('Network error. Please try again or email us directly at arpit@crednexaadvisory.com.', false);
+      showMsg('Network error. Please try again or email us directly at contact@crednexaadvisory.com.', false);
     }).finally(function () {
       newChallenge();
       resetTurnstile();
