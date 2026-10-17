@@ -157,6 +157,11 @@
   }
 
   /* --- Field rules --- */
+  // Accepts 10 digits, optionally prefixed with +91 (spaces and hyphens allowed); returns "+91 XXXXXXXXXX" or ''
+  var normMobile = function (v) {
+    var m = String(v).replace(/[\s-]/g, '').match(/^(?:\+91)?(\d{10})$/);
+    return m ? '+91 ' + m[1] : '';
+  };
   var countWords = function (v) { var m = v.trim().match(/\S+/g); return m ? m.length : 0; };
   var RULES = {
     name: function (v) {
@@ -167,7 +172,7 @@
       return /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)*\.[A-Za-z]{2,}$/.test(v.trim()) ? '' : 'Please enter a valid email address, e.g. name@company.com.';
     },
     mobile: function (v) {
-      return /^\d{10}$/.test(v.trim()) ? '' : 'Please enter a 10-digit mobile number (digits only).';
+      return normMobile(v) ? '' : 'Please enter a 10-digit mobile number, optionally starting with +91 (e.g. +91 98765 43210).';
     },
     brief: function (v) {
       var n = countWords(v);
@@ -192,8 +197,10 @@
   });
   var mobileEl = document.getElementById('mobile');
   if (mobileEl) mobileEl.addEventListener('input', function () {
-    var d = mobileEl.value.replace(/\D/g, '').slice(0, 10);
-    if (d !== mobileEl.value) mobileEl.value = d;
+    // keep digits, spaces and hyphens, plus a single leading "+"
+    var v = mobileEl.value;
+    var d = (v.trim().charAt(0) === '+' ? '+' : '') + v.replace(/[^\d\s-]/g, '');
+    if (d !== v) mobileEl.value = d;
   });
   var briefEl = document.getElementById('brief'), briefCount = document.getElementById('brief-count');
   var updateCount = function () {
@@ -233,6 +240,7 @@
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
     var data = new FormData(form);
+    data.set('Mobile Number', normMobile(mobileEl ? mobileEl.value : ''));
     data.delete('Security Check');
     if (useTurnstile) data.set('cf-turnstile-response', tsToken);
     fetch(form.getAttribute('action'), {
