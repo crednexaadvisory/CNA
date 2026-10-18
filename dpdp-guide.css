@@ -35,10 +35,10 @@
 .dpdp-sources h3 { font-family: var(--f-display); font-size: 26px; font-weight: 600; margin-bottom: 6px; }
 .dpdp-sources > p { font-size: 14.5px; color: var(--muted); margin-bottom: 8px; }
 .dpdp-sources ul { list-style: none; }
-.dpdp-sources li a { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 13px 0; border-top: 1px solid var(--line); font-size: 15px; font-weight: 500; color: var(--ink); }
-.dpdp-sources li a small { display: block; font-size: 12.5px; font-weight: 400; color: var(--muted); margin-top: 2px; }
-.dpdp-sources li a svg { flex: none; color: var(--gold); }
-.dpdp-sources li a:hover { color: var(--gold-ink); }
+.dpdp-sources ul li a { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 13px 0; border-top: 1px solid var(--line); font-size: 15px; font-weight: 500; color: var(--ink); }
+.dpdp-sources ul li a small { display: block; font-size: 12.5px; font-weight: 400; color: var(--muted); margin-top: 2px; }
+.dpdp-sources ul li a svg { flex: none; color: var(--gold); }
+.dpdp-sources ul li a:hover { color: var(--gold-ink); }
 .dpdp .facts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .dpdp .facts div { background: var(--ink); padding: 24px 22px; }
 .dpdp .facts b { display: block; font-family: var(--f-display); font-size: 40px; font-weight: 600; line-height: 1; color: #fff; }
@@ -208,3 +208,13 @@
   .dpdp .wiz, .dpdp .quiz { padding: 22px 18px; }
 }
 @media (prefers-reduced-motion: reduce) { .dpdp .fill { transition: none; } }
+
+/* Official texts list */
+.dpdp-sources .src-list { list-style: none; }
+.dpdp-sources .src-list li { display: flex; gap: 16px; padding: 18px 0; border-top: 1px solid var(--line); }
+.dpdp-sources .src-no { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--gold); display: grid; place-items: center; font-family: var(--f-display); font-weight: 600; font-size: 16px; color: var(--gold-ink); }
+.dpdp-sources .src-title { display: block; font-size: 15.5px; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.dpdp-sources .src-title:hover { color: var(--gold-ink); }
+.dpdp-sources .src-list p { font-size: 14px; color: var(--muted); margin: 6px 0 10px; }
+.dpdp-sources .src-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 500; color: var(--gold-ink); border-bottom: 1px solid var(--gold); padding-bottom: 1px; }
+.dpdp-sources .src-link svg { color: var(--gold); }
