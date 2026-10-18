@@ -122,8 +122,36 @@ function q(){
 }
 q();
 
-/* ---------- Nav highlight ---------- */
+/* ---------- Chapter menu: horizontal scrolling + highlight ---------- */
+const inner=document.querySelector('nav.rail .rail-inner'),track=document.querySelector('nav.rail .rail-track');
+const prevB=document.querySelector('nav.rail .rail-btn.prev'),nextB=document.querySelector('nav.rail .rail-btn.next');
 const links=[...document.querySelectorAll('nav.rail a')];
-const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}})},{rootMargin:'-40% 0px -55% 0px'});
+function edges(){
+  const max=track.scrollWidth-track.clientWidth;
+  const l=track.scrollLeft>4,r=track.scrollLeft<max-4;
+  inner.classList.toggle('can-left',l);inner.classList.toggle('can-right',r);
+  prevB.classList.toggle('off',!l);nextB.classList.toggle('off',!r);
+  prevB.tabIndex=l?0:-1;nextB.tabIndex=r?0:-1;
+  const none=max<=4;prevB.hidden=none;nextB.hidden=none;
+}
+const step=()=>Math.max(track.clientWidth*0.7,160);
+prevB.addEventListener('click',()=>track.scrollBy({left:-step()}));
+nextB.addEventListener('click',()=>track.scrollBy({left:step()}));
+track.addEventListener('scroll',edges,{passive:true});
+window.addEventListener('resize',edges);
+// mouse wheel over the menu scrolls it sideways
+track.addEventListener('wheel',e=>{
+  if(Math.abs(e.deltaY)>Math.abs(e.deltaX)&&track.scrollWidth>track.clientWidth){
+    const max=track.scrollWidth-track.clientWidth;
+    if((e.deltaY<0&&track.scrollLeft>0)||(e.deltaY>0&&track.scrollLeft<max)){e.preventDefault();track.scrollBy({left:e.deltaY,behavior:'auto'})}
+  }
+},{passive:false});
+// keep the current chapter visible in the menu
+function reveal(a){
+  const t=track.getBoundingClientRect(),r=a.getBoundingClientRect();
+  if(r.left<t.left+40||r.right>t.right-40) track.scrollBy({left:(r.left+r.width/2)-(t.left+t.width/2)});
+}
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>{const on=l.getAttribute('href')==='#'+e.target.id;l.classList.toggle('on',on);if(on){l.setAttribute('aria-current','true');reveal(l)}else l.removeAttribute('aria-current')})}})},{rootMargin:'-40% 0px -55% 0px'});
 document.querySelectorAll('section.ch').forEach(s=>io.observe(s));
+edges();
 })();
